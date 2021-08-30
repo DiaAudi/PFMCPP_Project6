@@ -39,8 +39,10 @@ struct Compare                                //4
     {
         if(a != nullptr && b != nullptr)
         {
-            if( a->value < b->value ) return a;
-            if( a->value > b->value ) return b;
+            T &aa = *a;
+            T &bb = *b;
+            if( aa.value < bb.value ) return &aa;
+            if( aa.value > bb.value ) return &bb;
         }
         return nullptr;
     }
@@ -53,8 +55,9 @@ struct U
     {   
         if(updatedValue != nullptr)
         {
+            float &newValue = *updatedValue;
             std::cout << "U's value1 value: " << value1 << std::endl;
-            value1 = *updatedValue;
+            value1 = newValue;
             std::cout << "U's value1 updated value: " << value1 << std::endl;
             while( std::abs(value2 - value1) > 0.001f )
             {
@@ -76,19 +79,21 @@ struct PrintUpdated
     static float printUpdate(U* that,float* updatedValue )        //10
     {   
         if(updatedValue != nullptr)
-        {
-            std::cout << "U's value1 value: " << that->value1 << std::endl;
-            that->value1 = *updatedValue;
-            std::cout << "U's value1 updated value: " << that->value1 << std::endl;
-            while( std::abs(that->value2 - that->value1) > 0.001f )
+        {   
+            U &thatt = *that;
+            float &updatedValuee = *updatedValue;
+            std::cout << "U's value1 value: " << thatt.value1 << std::endl;
+            thatt.value1 = updatedValuee;
+            std::cout << "U's value1 updated value: " << thatt.value1 << std::endl;
+            while( std::abs(thatt.value2 - thatt.value1) > 0.001f )
             {
             /*
              write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
              */
-                that->value2 += 0.5f;
+                thatt.value2 += 0.5f;
             }
-            std::cout << "U's value2 updated value: " << that->value2 << std::endl;
-            return that->value2 * that->value1;
+            std::cout << "U's value2 updated value: " << thatt.value2 << std::endl;
+            return thatt.value2 * thatt.value1;
         }
         return 0.f;
     }
@@ -116,8 +121,11 @@ int main()
     Compare f;                                         //7
     auto* smaller = f.compare(&c, &d);                              //8
     if(smaller != nullptr)
-        std::cout << "the smaller one is " << smaller->name << std::endl;
-    else if(c.value == d.value) 
+    {
+        auto &smallerr = *smaller;
+        std::cout << "the smaller one is " << smallerr.name << std::endl;
+    }
+    else if(c.value == d.value)
         std::cout << "same" <<std::endl;
     else
         std::cout << "nullptr" << std::endl;

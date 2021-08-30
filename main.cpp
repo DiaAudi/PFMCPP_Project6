@@ -25,7 +25,7 @@ Create a branch named Part2
 #include <string>
 struct T
 {
-    T(int v, const char *p);   //1
+    T(int v, const char* p);   //1
     int value;//2
     std::string name;//3
 };
@@ -35,13 +35,10 @@ T::T(int v, const char* p) : value(v), name(p){}
 
 struct Compare                                //4
 {
-    T* compare(T* a, T* b) //5
+    T* compare(T& a, T& b) //5
     {
-        if(a != nullptr && b != nullptr)
-        {
-            if( a->value < b->value ) return a;
-            if( a->value > b->value ) return b;
-        }
+        if( a.value < b.value ) return &a;
+        if( b.value < a.value ) return &b;
         return nullptr;
     }
 };
@@ -49,48 +46,40 @@ struct Compare                                //4
 struct U
 {
     float value1 { 0 }, value2 { 0 };
-    float uPrintUpdated(float* updatedValue)      //12
+    float uPrintUpdated(float& updatedValue)      //12
     {   
-        if(updatedValue != nullptr)
+        std::cout << "U's value1 value: " << value1 << std::endl;
+        value1 = updatedValue;
+        std::cout << "U's value1 updated value: " << value1 << std::endl;
+        while( std::abs(value2 - value1) > 0.001f )
         {
-            std::cout << "U's value1 value: " << value1 << std::endl;
-            value1 = *updatedValue;
-            std::cout << "U's value1 updated value: " << value1 << std::endl;
-            while( std::abs(value2 - value1) > 0.001f )
-            {
             /*
              write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
              */
 
-                value2 += 0.5f;
-            }
-            std::cout << "U's value2 updated value: " << value2 << std::endl;
-            return value2 * value1;
+            value2 += 0.5f;
         }
-        return 0.f;
+        std::cout << "U's value2 updated value: " << value2 << std::endl;
+        return value2 * value1;    
     }
 };
 
 struct PrintUpdated
 {
-    static float printUpdate(U* that,float* updatedValue )        //10
+    static float printUpdate(U& that, float& updatedValue )        //10
     {   
-        if(updatedValue != nullptr)
+        std::cout << "U's value1 value: " << that.value1 << std::endl;
+        that.value1 = updatedValue;
+        std::cout << "U's value1 updated value: " << that.value1 << std::endl;
+        while( std::abs(that.value2 - that.value1) > 0.001f )
         {
-            std::cout << "U's value1 value: " << that->value1 << std::endl;
-            that->value1 = *updatedValue;
-            std::cout << "U's value1 updated value: " << that->value1 << std::endl;
-            while( std::abs(that->value2 - that->value1) > 0.001f )
-            {
             /*
              write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
              */
-                that->value2 += 0.5f;
-            }
-            std::cout << "U's value2 updated value: " << that->value2 << std::endl;
-            return that->value2 * that->value1;
+            that.value2 += 0.5f;
         }
-        return 0.f;
+        std::cout << "U's value2 updated value: " << that.value2 << std::endl;
+        return that.value2 * that.value1;         
     }
 };
         
@@ -114,20 +103,26 @@ int main()
     T d(2, "d");                                             //6
     
     Compare f;                                         //7
-    auto* smaller = f.compare(&c, &d);                              //8
+    auto* smaller = f.compare(c, d);                              //8
     if(smaller != nullptr)
+    {
         std::cout << "the smaller one is " << smaller->name << std::endl;
-    else if(c.value == d.value) 
+    }
+    else if(c.value == d.value)
+    {
         std::cout << "same" <<std::endl;
+    }
     else
+    {
         std::cout << "nullptr" << std::endl;
+    }
     
     U u1;
     float updatedValue = 5.f;
-    std::cout << "[static func] u1's multiplied values: " << PrintUpdated::printUpdate(&u1, &updatedValue) << std::endl;                  //11
+    std::cout << "[static func] u1's multiplied values: " << PrintUpdated::printUpdate(u1, updatedValue) << std::endl;                  //11
     
     U u2;
-    std::cout << "[member func] u2's multiplied values: " << u2.uPrintUpdated( &updatedValue ) << std::endl;
+    std::cout << "[member func] u2's multiplied values: " << u2.uPrintUpdated( updatedValue ) << std::endl;
 }
 
         

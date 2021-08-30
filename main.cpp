@@ -41,8 +41,8 @@ struct Compare                                //4
         {
             T &aa = *a;
             T &bb = *b;
-            if( aa.value < bb.value ) return &aa;
-            if( aa.value > bb.value ) return &bb;
+            if( aa.value < bb.value ) return *a;
+            if( aa.value > bb.value ) return *b;
         }
         return nullptr;
     }
